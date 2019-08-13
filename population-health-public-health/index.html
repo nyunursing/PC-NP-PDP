@@ -8,6 +8,7 @@
 <style type="text/css">#initialLoading{background:url(assets/htmlimages/loader.gif) no-repeat center center;background-color:#ffffff;position:absolute;margin:auto;top:0;left:0;right:0;bottom:0;z-index:10010;}</style>
 
 "
+
 <script>
 
 var deviceReady = false;
@@ -25,12 +26,34 @@ function onBodyLoad()
 		onDeviceReady();
 	}
 }
+function isLivePreview()
+{
+	return  ( window.location.pathname.indexOf("\/livepreview") === 0 );
+}
 
 function onDeviceReady()
 {
 	deviceReady = true ;
 	if(initCalled === true)
 		initializeCP();
+}
+
+function isLivePreviewDirty()
+{
+	var reqUrl = window.location.protocol + "//" + window.location.host + "/livepreview/isLivePreviewDirty?folder=" + cp.previewFolder;
+	var request = new XMLHttpRequest();
+	request.open('GET', reqUrl);
+	request.responseType = 'text';
+	request.onload = function()
+	{
+  		var response = JSON.parse(request.response);
+		  if(response.isDirty == false)
+		  {
+			return;
+		  }
+  		window.location.href = window.location.protocol + "//" + window.location.host + "/livepreview/" + response.folder + "/index.html";
+	};
+	request.send();
 }
 
 function initializeCP()
@@ -52,10 +75,22 @@ function initializeCP()
 				cp.UnloadActivties();
 			lCpExit();
 		};
+
+		if( window.CPYTAPINeeded )
+		{
+		  var tag = document.createElement('script');
+		  tag.src = "https://www.youtube.com/iframe_api";
+		  document.getElementsByTagName('head')[0].appendChild(tag);
+		}		
 	}
 	
 	cpInit();
 	initialized = true;
+	if(isLivePreview() === true)
+	{	
+		cp.previewFolder = window.location.href.split("\/")[4];
+		setInterval(isLivePreviewDirty, 1000);
+	}
 }
 
 </script>
@@ -103,7 +138,7 @@ function initializeCP()
 							var imagesJSONFiles = [ 'dr/imgmd.json' ];
 							cpXHRJSLoader.loadImagesJSON(imagesJSONFiles,function(imageToJSONPathMap){
 								cp.imageToJSONPathMap = imageToJSONPathMap;
-								var imageJSONFiles = [ 'dr/img1.json' ];
+								var imageJSONFiles = [ 'dr/img1.json','dr/img2.json' ];
 								if(window.location.protocol.substr(0,4) == "file")
 									cpXHRJSLoader.preloadURLs(imageJSONFiles, constructDIVs);
 								lJSLoaded = true;
