@@ -130,7 +130,7 @@ function initializeCP()
 							lCSSLoaded = true;
 							constructDIVs();
 						});
-						var lJSFiles = [  'assets/js/jquery-1.11.3.min.js','scormdriver.js','assets/js/CPM.js' ];
+						var lJSFiles = [  'assets/js/jquery-1.11.3.min.js','assets/js/CPM.js' ];
 						cpXHRJSLoader.js(lJSFiles,function()
 						{
 							//console.log("js loaded");
@@ -138,7 +138,7 @@ function initializeCP()
 							var imagesJSONFiles = [ 'dr/imgmd.json' ];
 							cpXHRJSLoader.loadImagesJSON(imagesJSONFiles,function(imageToJSONPathMap){
 								cp.imageToJSONPathMap = imageToJSONPathMap;
-								var imageJSONFiles = [ 'dr/img1.json','dr/img2.json','dr/img3.json' ];
+								var imageJSONFiles = [ 'dr/img1.json','dr/img2.json' ];
 								if(window.location.protocol.substr(0,4) == "file")
 									cpXHRJSLoader.preloadURLs(imageJSONFiles, constructDIVs);
 								lJSLoaded = true;
